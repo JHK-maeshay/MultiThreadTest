@@ -12,8 +12,9 @@ public class Producer implements Runnable{
 
     private final String name;
     private final Stack<Product> stack;
-    private final long producingTime;
+    private final long producingTime; //millisecond
     private final Logger logger;
+    private int produceTotal = 0; //총 생산량
 
     public Producer(Stack<Product> stack, long producingTime, Logger logger){
         this.stack = stack;
@@ -25,6 +26,15 @@ public class Producer implements Runnable{
 
     public String getName() {
         return name;
+    }
+
+    //*이름* - per *생산시간*/s, Total: *총생산량*
+    public void show() {
+        String ptFormatted = String.format("%.2f", (float) producingTime/1000);
+        System.out.print(name + " - per " + ptFormatted + "/s -- Total: "+ produceTotal);
+        if (stack.size() >= MAX_STACK_SIZE)
+            System.out.print(" (OUTPUT STUCK!!)");
+        System.out.print('\n');
     }
 
     @Override
@@ -44,6 +54,7 @@ public class Producer implements Runnable{
                 //매 producingTime 마다 product 생성후 스택에 추가
                 Thread.sleep(producingTime);
                 Product p = new Product();
+                produceTotal++;
                 synchronized (stack) {
                     stack.push(p);
                 }

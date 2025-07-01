@@ -27,12 +27,17 @@ public class Main {
         CommandHandler commandHandler = new CommandHandler();
         TokenCheck tokenCheck = new TokenCheck();
 
+        //입력변수들
+        String type;
+        int input_i;
+        float input_f;
+
         while (true) {
             System.out.print("=======================\n");
             System.out.print("** Factory Simulator **\n");
             System.out.print("=======================\n");
             System.out.print("=COMMANDS=  [read Readme.md for details]\n");
-            System.out.print("> create    > view       > info\n");
+            System.out.print("> create    > list       > field\n");
             System.out.print("> linkin    > linkout    > exit\n");
             System.out.print("=OBJECTS=  [ex)'create f']\n");
             System.out.print("(f)factory    (w)warehouse\n");
@@ -47,36 +52,36 @@ public class Main {
                 case "exit":
                     System.exit(0);
                     break;
+
                 case "create":
                     if (tokens.length < 2) {
                         System.out.println("Insufficient arguments... (press Enter)");
                         scanner.nextLine();
                         break;
                     }
-                    String type = tokens[1];
-                    int n;
+                    type = tokens[1];
                     switch (type){
                         case "f":
-                            System.out.println("Set production time (seconds), ex: 10\n");
+                            System.out.println("Set production time (seconds), ex: 9.5\n");
                             System.out.println("production time: ");
-                            n = tokenCheck.validIntScanner();
-                            commandHandler.handleCreateF(n, logger);
+                            input_f = tokenCheck.validFloatScanner();
+                            commandHandler.handleCreateF(input_f, logger);
                             System.out.println("Another factory was created successfully! (press Enter)");
                             scanner.nextLine();
                             break;
                         case "w":
                             System.out.println("Set max size (ea), ex: 40\n");
                             System.out.println("max size: ");
-                            n = tokenCheck.validIntScanner();
-                            commandHandler.handleCreateW(n, logger);
+                            input_i = tokenCheck.validIntScanner();
+                            commandHandler.handleCreateW(input_i, logger);
                             System.out.println("Another warehouse was created successfully! (press Enter)");
                             scanner.nextLine();
                             break;
                         case "c":
                             System.out.println("Set length of conveyor (ea), ex: 10\n");
                             System.out.println("length: ");
-                            n = tokenCheck.validIntScanner();
-                            commandHandler.handleCreateC(n, logger);
+                            input_i = tokenCheck.validIntScanner();
+                            commandHandler.handleCreateC(input_i, logger);
                             System.out.println("Another conveyor belt was created successfully! Use linkin/linkout to conncect object's output/input into this input/output. (press Enter)");
                             scanner.nextLine();
                             break;
@@ -87,6 +92,38 @@ public class Main {
                             break;
                     }
                     break;
+
+                case "list":
+                    if (tokens.length < 2) {
+                        System.out.println("Insufficient arguments... (press Enter)");
+                        scanner.nextLine();
+                        break;
+                    }
+                    type = tokens[1];
+                    switch (type) {
+                        case "f":
+                            commandHandler.handleListF(logger);
+                            System.out.print("press Enter...");
+                            scanner.nextLine();
+                            break;
+                        case "w":
+                            commandHandler.handleListW(logger);
+                            System.out.print("press Enter...");
+                            scanner.nextLine();
+                            break;
+                        case "c":
+                            commandHandler.handleListC(logger);
+                            System.out.print("press Enter...");
+                            scanner.nextLine();
+                            break;
+                        case "d":
+                            commandHandler.handleListD(logger);
+                            System.out.print("press Enter...");
+                            scanner.nextLine();
+                            break;
+                    }
+                    break;
+
                 default:
                     System.out.println("Unknown command... (press Enter)");
                     scanner.nextLine();
