@@ -24,7 +24,8 @@ public class Main {
         
         //메소드객체불러오기
         Scanner scanner = new Scanner(System.in);
-        CommandHandler commandHandler = new CommandHandler();
+        CommandRegistry registry = new CommandRegistry();
+        CommandHandler commandHandler = new CommandHandler(registry);
         TokenCheck tokenCheck = new TokenCheck();
 
         //입력변수들
@@ -65,7 +66,7 @@ public class Main {
                             System.out.println("Set production time (seconds), ex: 9.5\n");
                             System.out.println("production time: ");
                             input_f = tokenCheck.validFloatScanner();
-                            commandHandler.handleCreateF(input_f, logger);
+                            commandHandler.handle("createProducer", input_f, logger);
                             System.out.println("Another factory was created successfully! (press Enter)");
                             scanner.nextLine();
                             break;
@@ -73,7 +74,7 @@ public class Main {
                             System.out.println("Set max size (ea), ex: 40\n");
                             System.out.println("max size: ");
                             input_i = tokenCheck.validIntScanner();
-                            commandHandler.handleCreateW(input_i, logger);
+                            commandHandler.handle("createWarehouse", (float) input_i, logger);
                             System.out.println("Another warehouse was created successfully! (press Enter)");
                             scanner.nextLine();
                             break;
@@ -81,18 +82,17 @@ public class Main {
                             System.out.println("Set length of conveyor (ea), ex: 10\n");
                             System.out.println("length: ");
                             input_i = tokenCheck.validIntScanner();
-                            commandHandler.handleCreateC(input_i, logger);
+                            commandHandler.handle("createConveyor", (float) input_i, logger);
                             System.out.println("Another conveyor belt was created successfully! Use linkin/linkout to conncect object's output/input into this input/output. (press Enter)");
                             scanner.nextLine();
                             break;
                         case "d":
-                            commandHandler.handleCreateD(logger);
+                            commandHandler.handle("createDistributor", 0, logger);
                             System.out.println("Another distribution belt was created successfully! (press Enter)");
                             scanner.nextLine();
                             break;
                     }
                     break;
-
                 case "list":
                     if (tokens.length < 2) {
                         System.out.println("Insufficient arguments... (press Enter)");
@@ -102,22 +102,22 @@ public class Main {
                     type = tokens[1];
                     switch (type) {
                         case "f":
-                            commandHandler.handleListF(logger);
+                            commandHandler.handle("listProducer", 0, logger);
                             System.out.print("press Enter...");
                             scanner.nextLine();
                             break;
                         case "w":
-                            commandHandler.handleListW(logger);
+                            //commandHandler.handleListW(logger);
                             System.out.print("press Enter...");
                             scanner.nextLine();
                             break;
                         case "c":
-                            commandHandler.handleListC(logger);
+                            //commandHandler.handleListC(logger);
                             System.out.print("press Enter...");
                             scanner.nextLine();
                             break;
                         case "d":
-                            commandHandler.handleListD(logger);
+                            //commandHandler.handleListD(logger);
                             System.out.print("press Enter...");
                             scanner.nextLine();
                             break;

@@ -28,11 +28,14 @@ public class Producer implements Runnable{
         return name;
     }
 
+    //조회시 스택 상태 확인용 플래그
+    private volatile boolean isStackFull = false;
     //*이름* - per *생산시간*/s, Total: *총생산량*
     public void show() {
         String ptFormatted = String.format("%.2f", (float) producingTime/1000);
         System.out.print(name + " - per " + ptFormatted + "/s -- Total: "+ produceTotal);
-        if (stack.size() >= MAX_STACK_SIZE)
+        //스택 동기화 문제 해결
+        if (isStackFull)
             System.out.print(" (OUTPUT STUCK!!)");
         System.out.print('\n');
     }
@@ -41,16 +44,20 @@ public class Producer implements Runnable{
     public void run() {
         try {
             while (true) {
+                //대기 상태 제어
+
                 //스택 제어
                 synchronized (stack) {
                     if (stack.size() >= MAX_STACK_SIZE) {
                         /*System.out.println("Buffer full! Connect conveyor!");*/
                         // 생산을 skip 하고 기다림
+                        isStackFull = true;
                         Thread.sleep(producingTime);
                         continue;
                     }
                 }
 
+                isStackFull = false;
                 //매 producingTime 마다 product 생성후 스택에 추가
                 Thread.sleep(producingTime);
                 Product p = new Product();
