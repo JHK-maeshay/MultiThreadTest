@@ -25,12 +25,12 @@ flowchart TD
 
 ```mermaid
 classDiagram
-    class Product:::green{
+    class Product:::blue{
 		+ LocalDateTime productionTime
 		+ LocalDateTime expirationTime
 }
 
-classDef green fill:#dfd
+classDef blue fill:#dff
 ```
 
 ```mermaid
@@ -64,14 +64,52 @@ Conveyor --> Warehouse : queue
 
 ```mermaid
 classDiagram
-    class CommandHandler:::red{
-        + handleCreate()... -c, -d, -p, -w
-        + handleList()... -c, -d, -p, -w
+    class Command:::creen{
+        interface*
+        + execute()
 }
-    class Command:::red{
-        +
+    class CommandContext{
+        + Map＜string,$var＞ $varMap
+        + Map＜string,$var＞ $varMap
+        + ...
+        + show$Var()
 }
-CommandHandler <|-- Command
-Command --() USER
-classDef red fill:#faa
+    class Create`{$var}`:::green{
+        + execute()
+        + ...
+}
+    class List`{$var}`:::green{
+        + execute()
+        + ...
+}
+
+    class `{...}`:::green{
+        + execute()
+        + ...
+}
+
+    class CommandRegistry:::green{
+        + Map＜String, Command＞ commandMap
+        + CommandContext context
+        + getCommand(command)
+}
+    class CommandHandler:::green{
+        + CommandRegistry registry
+        + handle(command)
+}
+
+Command --|> Create`{$var}` 
+Command --|> List`{$var}`
+Command --|> `{...}`
+CommandContext --> Create`{$var}` 
+CommandContext --> List`{$var}`
+CommandContext --> `{...}`
+Create`{$var}` --> CommandRegistry
+List`{$var}` --> CommandRegistry
+`{...}` --> CommandRegistry
+CommandRegistry --> CommandHandler
+CommandRegistry --> Main
+CommandHandler --> Main
+classDef creen fill:#efe
+classDef green fill:#cfc
 ```
