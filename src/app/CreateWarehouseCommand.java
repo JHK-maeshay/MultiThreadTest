@@ -2,7 +2,9 @@ package app;
 
 import java.util.logging.Logger;
 
-public class CreateWarehouseCommand implements Command{
+import warehouse.Warehouse;
+
+public class CreateWarehouseCommand implements Command {
     private final CommandContext context;
 
     public CreateWarehouseCommand(CommandContext context) {
@@ -10,7 +12,9 @@ public class CreateWarehouseCommand implements Command{
     }
 
     @Override
-    public void execute(float f, Logger logger){
-        logger.info("CreateWCommand executed with n = " + f);
+    public void execute(float f, Logger logger) {
+        int capacity = (int) f;
+        Warehouse warehouse = new Warehouse(capacity);
+        context.addWarehouse(warehouse);
     }
 }

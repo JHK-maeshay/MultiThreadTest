@@ -2,7 +2,9 @@ package app;
 
 import java.util.logging.Logger;
 
-public class CreateDistributorCommand implements Command{
+import conveyor.Distributor;
+
+public class CreateDistributorCommand implements Command {
     private final CommandContext context;
 
     public CreateDistributorCommand(CommandContext context) {
@@ -10,8 +12,9 @@ public class CreateDistributorCommand implements Command{
     }
 
     @Override
-    public void execute(float f, Logger logger){
-        logger.info("CreateWCommand executed with n = " + f);
+    public void execute(float f, Logger logger) {
+        Distributor distributor = new Distributor();
+        context.addDistributor(distributor);
     }
 }
 

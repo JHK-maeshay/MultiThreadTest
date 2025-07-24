@@ -1,4 +1,5 @@
 import app.*;
+import controller.*;
 import conveyor.*;
 import factory.*;
 import item.*;
@@ -67,29 +68,25 @@ public class Main {
                             System.out.println("production time: ");
                             input_f = tokenCheck.validFloatScanner();
                             commandHandler.handle("createProducer", input_f, logger);
-                            System.out.println("Another factory was created successfully! (press Enter)");
-                            scanner.nextLine();
+                            System.out.println("Another factory was created successfully!");
                             break;
                         case "w":
                             System.out.println("Set max size (ea), ex: 40\n");
                             System.out.println("max size: ");
                             input_i = tokenCheck.validIntScanner();
                             commandHandler.handle("createWarehouse", (float) input_i, logger);
-                            System.out.println("Another warehouse was created successfully! (press Enter)");
-                            scanner.nextLine();
+                            System.out.println("Another warehouse was created successfully!");
                             break;
                         case "c":
-                            System.out.println("Set length of conveyor (ea), ex: 10\n");
+                            System.out.println("Set length of conveyor (unit), ex: 10.5\n");
                             System.out.println("length: ");
-                            input_i = tokenCheck.validIntScanner();
-                            commandHandler.handle("createConveyor", (float) input_i, logger);
-                            System.out.println("Another conveyor belt was created successfully! Use linkin/linkout to conncect object's output/input into this input/output. (press Enter)");
-                            scanner.nextLine();
+                            input_f = tokenCheck.validFloatScanner();
+                            commandHandler.handle("createConveyor", input_f, logger);
+                            System.out.println("Another conveyor belt was created successfully!");
                             break;
                         case "d":
                             commandHandler.handle("createDistributor", 0, logger);
-                            System.out.println("Another distribution belt was created successfully! (press Enter)");
-                            scanner.nextLine();
+                            System.out.println("Another distribution belt was created successfully!");
                             break;
                     }
                     break;
@@ -107,17 +104,17 @@ public class Main {
                             scanner.nextLine();
                             break;
                         case "w":
-                            //commandHandler.handleListW(logger);
+                        		commandHandler.handle("listWarehouse", 0, logger);
                             System.out.print("press Enter...");
                             scanner.nextLine();
                             break;
                         case "c":
-                            //commandHandler.handleListC(logger);
+                        		commandHandler.handle("listConveyor", 0, logger);
                             System.out.print("press Enter...");
                             scanner.nextLine();
                             break;
                         case "d":
-                            //commandHandler.handleListD(logger);
+                        		commandHandler.handle("listDistributor", 0, logger);
                             System.out.print("press Enter...");
                             scanner.nextLine();
                             break;

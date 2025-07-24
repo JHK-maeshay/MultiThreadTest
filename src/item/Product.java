@@ -20,5 +20,10 @@ public class Product {
         String etformatted = expirationTime.format(formatter);
         System.out.println(ptformatted + " | " + etformatted);
     }
+    
+    //유통기한 지났는지 검사
+    public boolean isExpired() {
+        return LocalDateTime.now().isAfter(expirationTime);
+    }
 
 }

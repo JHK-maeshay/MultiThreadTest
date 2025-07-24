@@ -72,5 +72,13 @@ public class Producer implements Runnable{
             logger.warning("Producer interrupted");
         }
     }
+    
+    //스택에 있는 객체 전달
+    public synchronized Product pollProduct() {
+        if (!stack.isEmpty()) {
+            return stack.pop();
+        }
+        return null;
+    }
 
 }

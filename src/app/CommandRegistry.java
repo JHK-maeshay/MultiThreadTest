@@ -16,6 +16,9 @@ public class CommandRegistry {
         commandMap.put("createDistributor", new CreateDistributorCommand(context));
         commandMap.put("createProducer", new CreateProducerCommand(context));
         commandMap.put("listProducer", new ListProducerCommand(context));
+        commandMap.put("listConveyor", new ListConveyorCommand(context));
+        commandMap.put("listDistributor", new ListDistributorCommand(context));
+        commandMap.put("listWarehouse", new ListWarehouseCommand(context));
     }
 
     public Command getCommand(String name) {
