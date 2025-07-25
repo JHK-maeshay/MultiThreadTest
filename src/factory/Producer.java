@@ -21,7 +21,7 @@ public class Producer implements Runnable{
         this.producingTime = producingTime;
         this.logger = logger;
         counter++;  // 객체 생성될 때 counter 증가
-        this.name = this.getClass().getSimpleName() + counter;
+        this.name = "f" + counter;
     }
 
     public String getName() {
@@ -33,7 +33,7 @@ public class Producer implements Runnable{
     //*이름* - per *생산시간*/s, Total: *총생산량*
     public void show() {
         String ptFormatted = String.format("%.2f", (float) producingTime/1000);
-        System.out.print(name + " - per " + ptFormatted + "/s -- Total: "+ produceTotal);
+        System.out.print(name + " - per " + ptFormatted + "/s -- Made: "+ produceTotal);
         //스택 동기화 문제 해결
         if (isStackFull)
             System.out.print(" (OUTPUT STUCK!!)");

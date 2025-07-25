@@ -33,30 +33,6 @@ public class Manager {
     }
 
     // 연결 정보 기반으로 Controller 생성
-    public void initializeControllers() {
-        for (String producerName : links.keySet()) {
-            Producer producer = producers.get(producerName);
-            List<String> conveyorNames = links.get(producerName);
-
-            List<Conveyor> connectedConveyors = new ArrayList<>();
-            for (String cname : conveyorNames) {
-                Conveyor c = conveyors.get(cname);
-                if (c != null) connectedConveyors.add(c);
-            }
-
-            // distributor 자동 생성 (또는 미리 추가된 것 사용 가능)
-            Distributor distributor = new Distributor();
-            String distributorId = "dist_" + producerName;
-            distributors.put(distributorId, distributor);
-
-            Controller controller = new Controller(
-                List.of(producer), connectedConveyors, distributor
-            );
-            Thread t = new Thread(controller);
-            t.start();
-            controllers.add(t);
-        }
-    }
 
     // 선택적으로 모든 스레드 종료 (중단 시그널 등 추가 가능)
     public void shutdown() {

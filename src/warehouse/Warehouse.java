@@ -19,7 +19,7 @@ public class Warehouse implements Receiver {
     public Warehouse(int capacity) {
         this.capacity = capacity;
         counter++;  // 객체 생성될 때 counter 증가
-        this.name = this.getClass().getSimpleName() + counter;
+        this.name = "w" + counter;
     }
     
     public String getName() {

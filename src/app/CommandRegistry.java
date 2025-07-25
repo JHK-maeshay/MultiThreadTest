@@ -19,9 +19,17 @@ public class CommandRegistry {
         commandMap.put("listConveyor", new ListConveyorCommand(context));
         commandMap.put("listDistributor", new ListDistributorCommand(context));
         commandMap.put("listWarehouse", new ListWarehouseCommand(context));
+        commandMap.put("linkp2c", new LinkProducerToConveyorCommand(context));
+        commandMap.put("linkd2c", new LinkDistributorToConveyorCommand(context));
+        commandMap.put("linkc2w", new LinkConveyorToWarehouseCommand(context));
+
     }
 
     public Command getCommand(String name) {
         return commandMap.get(name);
+    }
+    
+    public CommandContext getContext() {
+    		return context;
     }
 }

@@ -31,6 +31,7 @@ public class Main {
 
         //입력변수들
         String type;
+        String typeLink;
         int input_i;
         float input_f;
 
@@ -88,6 +89,10 @@ public class Main {
                             commandHandler.handle("createDistributor", 0, logger);
                             System.out.println("Another distribution belt was created successfully!");
                             break;
+                        default:
+                        		System.out.println("Invalid instance... (press Enter)");
+                        		scanner.nextLine();
+                        		break;
                     }
                     break;
                 case "list":
@@ -118,9 +123,47 @@ public class Main {
                             System.out.print("press Enter...");
                             scanner.nextLine();
                             break;
+                        default:
+	                    		System.out.println("Invalid instance... (press Enter)");
+	                    		scanner.nextLine();
+	                    		break;
                     }
                     break;
-
+                
+                case "field" :
+		            	break;
+                case "linkin":
+	                	if (tokens.length < 3) {
+	                        System.out.println("Insufficient arguments... (press Enter)");
+	                        scanner.nextLine();
+	                        break;
+	                    }
+	                	type = tokens[1];
+	                	typeLink = tokens[2];
+	                		if(type.startsWith("f") && typeLink.startsWith("c")) {
+	                			registry.getContext().setTempLinkFrom(type);
+	                		    registry.getContext().setTempLinkTo(typeLink);
+	                			commandHandler.handle("linkp2c", 0, logger);
+	                			break;
+	                		}
+	                		if(type.startsWith("c") && typeLink.startsWith("d")) {
+	                			break;
+	                		}
+	                		if(type.startsWith("c") && typeLink.startsWith("w")) {
+	                			registry.getContext().setTempLinkFrom(type);
+	                		    registry.getContext().setTempLinkTo(typeLink);
+	                			commandHandler.handle("linkc2w", 0, logger);
+	                			break;
+	                		}
+	                		if(type.startsWith("d") && typeLink.startsWith("c")) {
+	                			break;
+	                		}
+		            		System.out.println("Invalid instance... (press Enter)");
+		            		scanner.nextLine();
+                		break;
+                case "linkout":
+                		break;
+                	
                 default:
                     System.out.println("Unknown command... (press Enter)");
                     scanner.nextLine();
