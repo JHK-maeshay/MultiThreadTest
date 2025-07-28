@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>대시보드</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Vue.js -->
+  <script src="https://unpkg.com/vue@3"></script>
+  
+  <!-- Toastify CDN 추가 -->
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center py-8">
+
+  <h1 class="text-3xl font-bold mb-6">Component Status Panel</h1>
+  
+  <div id="app" class="grid grid-cols-2 gap-6 w-11/12 max-w-screen-xl">
+  
+	<!-- Link 입력 모달 -->
+	<div v-if="showLinkModal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+	  <div class="bg-white p-6 rounded-lg shadow-lg w-50">
+	    <h3 class="text-lg font-semibold mb-4">Link 대상 ID 입력</h3>
+	    
+	    <input v-model="linkTargetId"
+	           type="text"
+	           class="w-full border border-gray-300 px-3 py-2 rounded mb-4"
+	           placeholder="예: c1, w2 등" />
+	    
+	    <div class="flex justify-end gap-2">
+	      <button @click="showLinkModal = false"
+	              class="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded">
+	        취소
+	      </button>
+	      <button @click="confirmLink"
+	              class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+	        확인
+	      </button>
+	    </div>
+	  </div>
+	</div>
+	
+    <!-- 각 컴포넌트 -->
+    <div v-for="(items, type) in components" :key="type" class="bg-white p-6 rounded-lg shadow-md">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-semibold capitalize">{{ type }}</h2>
+        <div class="flex items-center">
+        	<template v-if="type !== 'distributor'">
+		  <input
+			  v-model="values[type]"
+			  type="text"
+			  class="border border-gray-300 rounded px-2 py-1 mr-2 w-24"
+			  :placeholder="placeholders[type]"
+			/>
+		</template>
+          <button
+            @click="addComponent(type)"
+            class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded mr-2"
+          >
+            Add
+          </button>
+          <button
+		    @click="openLinkModal(type)"
+		    class="bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded"
+		  >
+		    Link
+		  </button>
+        </div>
+      </div>
+
+      <table class="w-full text-sm border border-gray-300">
+        <thead>
+          <tr class="bg-gray-200 text-left">
+            <th class="p-2">ID</th>
+            <th class="p-2" v-if="type === 'producer'">Cooltime (s)</th>
+            <th class="p-2" v-if="type === 'producer'">Total</th>
+
+            <th class="p-2" v-if="type === 'conveyor'">Length</th>
+            <th class="p-2" v-if="type === 'conveyor'">Conveyed</th>
+
+            <th class="p-2" v-if="type === 'warehouse'">Storage</th>
+            <th class="p-2" v-if="type === 'warehouse'">Capacity</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="item in items"
+            :key="item.name"
+            :class="{
+              'bg-blue-100 text-blue-800': selectedItem === item.name,
+              'hover:bg-blue-50 cursor-pointer': true
+            }"
+            @click="selectItem(item.name)"
+          >
+            <td class="p-2">{{ item.name }}</td>
+
+            <!-- Producer -->
+            <td class="p-2" v-if="type === 'producer'">{{ item.producingTime.toFixed(1) }}</td>
+            <td class="p-2" v-if="type === 'producer'">{{ item.produceTotal }}</td>
+
+            <!-- Conveyor -->
+            <td class="p-2" v-if="type === 'conveyor'">{{ item.length.toFixed(1) }}</td>
+            <td class="p-2" v-if="type === 'conveyor'">{{ item.conveyTotal }}</td>
+
+            <!-- Warehouse -->
+            <td class="p-2" v-if="type === 'warehouse'">{{ item.storageSize }}</td>
+            <td class="p-2" v-if="type === 'warehouse'">{{ item.capacity }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Vue.js -->
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          showLinkModal: false,
+          linkTargetId: '',
+          linkSourceType: '',
+          linkTargetType: '',
+          selectedItem: null,
+          components: {
+            producer: [],
+            conveyor: [],
+            warehouse: [],
+            distributor: []
+          },
+          values: {
+            producer: 7.5,
+            conveyor: 2.5,
+            warehouse: 120
+          },
+          placeholders: {
+            producer: "Cooltime (s)",
+            conveyor: "Length",
+            warehouse: "Capacity"
+          }
+        };
+      },
+      
+      methods: {
+    	  async addComponent(type) {
+    		  let value = parseFloat(this.values[type]);
+
+    		  // 기본값 대입
+    		  if (isNaN(value) || value <= 0) {
+    		    if (type === 'producer') value = 7.5;
+    		    else if (type === 'conveyor') value = 2.5;
+    		    else if (type === 'warehouse') value = 120;
+    		  }
+
+    		  let url = `/api/components/${type}`;
+    		  const config = { method: 'POST' };
+
+    		  if (type !== 'distributor') {
+    		    const params = new URLSearchParams();
+    		    params.append('value', value);
+    		    url += `?${params.toString()}`;
+    		  }
+
+    		  try {
+    		    const response = await fetch(url, config);
+    		    const list = await response.json();
+    		    this.components[type] = list;
+    		    //showToast(`${type} 생성 완료`, "#3B82F6");
+    		  } catch (e) {
+    		    //showToast(`${type} 생성 실패`, "#EF4444");
+    		  }
+    		},
+
+        selectItem(name) {
+          this.selectedItem = name;
+        },
+
+        openLinkModal(type) {
+          if (!this.selectedItem) {
+            showToast("먼저 연결할 컴포넌트를 선택하세요.", "#F97316");
+            return;
+          }
+
+          this.linkSourceType = type;
+          if (type === 'producer') this.linkTargetType = 'conveyor';
+          else if (type === 'conveyor') this.linkTargetType = 'warehouse';
+          else {
+            showToast("이 타입은 연결할 수 없습니다.", "#F97316");
+            return;
+          }
+
+          this.showLinkModal = true;
+          this.linkTargetId = '';
+        },
+
+        async confirmLink() {
+          if (!this.linkTargetId || this.linkTargetId.trim() === '') {
+            showToast("대상 ID를 입력하세요.", "#F97316");
+            return;
+          }
+
+          const from = this.selectedItem;
+          const to = this.linkTargetId;
+          let url = "";
+
+          if (this.linkTargetType === "conveyor") {
+            url = `/api/link/producer?from=${from}&to=${to}`;
+          } else if (this.linkTargetType === "warehouse") {
+            url = `/api/link/conveyor?from=${from}&to=${to}`;
+          } else {
+            showToast("알 수 없는 연결 대상입니다.", "#F97316");
+            return;
+          }
+
+          try {
+            const response = await fetch(url, { method: 'POST' });
+            const message = await response.text();
+            if (response.ok) {
+              showToast(message || `${from} → ${to} 연결 성공`, "#10B981");
+            } else {
+              showToast(message || "연결 실패", "#EF4444");
+            }
+          } catch (e) {
+            showToast("서버 오류: 연결 실패", "#EF4444");
+          }
+
+          this.showLinkModal = false;
+          this.linkTargetId = '';
+        },
+        
+        async updateComponentStatus() {
+            const types = ['producer', 'conveyor', 'warehouse', 'distributor'];
+            for (const type of types) {
+              try {
+            	    const res = await fetch(`/api/components/status/${type}`);
+                const data = await res.json();
+                this.components[type] = data;
+              } catch (e) {
+                console.error(`🔁 ${type} 상태 갱신 실패`, e);
+              }
+            }
+          },
+
+          startPolling() {
+            setInterval(() => {
+              this.updateComponentStatus();
+            }, 1000); // ms마다 상태 갱신
+          }
+      },
+      mounted() {
+  	  	this.startPolling();
+  	  }
+    });
+
+    function showToast(message, color = "#EF4444") {
+      Toastify({
+        text: message,
+        duration: 3000,
+        gravity: "top",
+        position: "center",
+        backgroundColor: color,
+        close: true
+      }).showToast();
+    }
+
+    app.mount('#app');
+  </script>
+</body>
+</html>
