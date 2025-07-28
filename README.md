@@ -4,6 +4,13 @@ Make factory with **multithreading**. Also learn about **Producer-Consumer Patte
 <br>
 <br>
 
+> web UI
+
+<img width="1603" height="1008" alt="Image" src="https://github.com/user-attachments/assets/3a2c86fc-d6f3-48f0-a865-33378ac6cab3" />
+
+<br>
+<br>
+
 > Simple Flow Chart!
 
 ```mermaid
